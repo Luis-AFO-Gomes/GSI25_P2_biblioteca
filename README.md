@@ -133,3 +133,15 @@ class EditoraAdmin(admin.ModelAdmin):
 **Nota**: não esquecer de actualizar o ***import*** de ```.models.py```
 
 ### Migrar...
+Aceder à página de administração para validar que a estrutura de dados está correcta
+
+### Parte IV - Views e templates
+Criar uma view personalizada para a página de livros:
+[views.py](.\biblioteca\livros\views.py)<br>
+É necessário iportar a classe [Livros] para a view poder aceder à base de dados e apresentar os livros registados
+
+O render da página pode gerar erro caso o dataset esteja vazio. Para evitar este erro pode-se adicionar uma view de especifica para este caso:
+```Livro.existentes```
+
+Criar um template para a página de livros:
+[livros.html](.\biblioteca\livros\templates\livros\livros.html)

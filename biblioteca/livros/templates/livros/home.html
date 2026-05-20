@@ -58,5 +58,18 @@
     <div class="badge">URL : {{ request.get_host }}{{ request.path }} • Method: {{ request.method }} </div>
     <p>{{ request }}</p>
   </div>
+<!--
+  <div class="card">
+    <h1><a href="{% url 'livros:lista_livros' %}">Biblioteca Publica</a></h1>
+      {% for livro in livros %}
+        <h2>
+            {{ livro.titulo }}
+        </h2>
+        <div class="badge">
+          {{ livro.get_status_display|truncatewords:30|linebreaks }}
+        </div>
+      {% endfor %}
+  </div>
+-->  
 </body>
 </html>

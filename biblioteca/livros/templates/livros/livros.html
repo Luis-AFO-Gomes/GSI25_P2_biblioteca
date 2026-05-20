@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static 'css/biblioteca.css' %}" rel="stylesheet">
+</head>
+<body>
+
+  <h1>Biblioteca Publica</h1>
+  {% for livro in livros %}
+    <h2>
+         {{ livro.titulo }}
+    </h2>
+    <p class="tipo">
+      formato {{ livro.tipo }} em {{ livro.idioma }}
+    </p>
+    <p class="status">
+      {{ livro.get_status_display|truncatewords:30|linebreaks }}
+    </p>
+  {% endfor %}
+</body>
+</html>
