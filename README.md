@@ -90,3 +90,46 @@ Confirmar que na secção ```[urlpatterns]``` do ficheiro ```biblioteca\urls.py`
 path('admin/', admin.site.urls),
 ```
 **ATENÇÃO** o registo é no ficheiro ```urls.py``` na root do projecto, não no da app
+
+## Parte III multiplos objectos e views personalizadas
+
+### Definir uma 2ª classe: editora
+No ficheiro ```livro\models.py``` adicionar a classe [editora]:
+```
+class Editora(models.Model):
+    nipc = models.CharField(max_length=9, unique=True, primary_key=True)
+    nome = models.CharField(max_length=100)
+    contacto = models.CharField(max_length=100)
+    morada = models.CharField(max_length=200)
+    class Meta:
+        ordering = ['nipc']
+        indexes = [
+            models.Index(fields=['nipc']),
+            models.Index(fields=['nome']),
+        ]
+
+    def __str__(self):
+        return self.nome
+```
+### Adicionar FK de livro para editora
+Ainda no mesmo ficheiro, alterar o atributo ```editora``` para:
+```
+editora = models.ForeignKey(Editora, to_field='nipc', on_delete=models.PROTECT)
+```
+
+### Actualizar as dependências para incluir a nova classe
+De momento, o importante é actualizar o ficheiro ```admin.py``` para incluir a lista de editoras na interface de administração
+Registar a classe:
+```
+@admin.register(Editora)
+```
+E definir a lista de tabela:
+```
+class EditoraAdmin(admin.ModelAdmin):
+    list_display = ('nipc', 'nome', 'contacto', 'morada')
+    search_fields = ('nipc', 'nome')
+    list_filter = ('nome',)
+```
+**Nota**: não esquecer de actualizar o ***import*** de ```.models.py```
+
+### Migrar...
