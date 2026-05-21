@@ -1,13 +1,11 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="{% static 'style/biblioteca.css' %}" rel="stylesheet">
-</head>
-<body>
-
+{% extends 'livros/master.html' %}
+{% block title %}Biblioteca Publica{% endblock %}
+{% block content %}
+<!-- 
+    meta content e cabeçalho são retirados porque já existe no master.html 
+    Todos os arquivos html que extendem o master.html não precisam repetir o 
+    código do cabeçalho, basta colocar o conteúdo dentro do bloco content
+  -->
   <h1>Biblioteca Publica</h1>
   {% for livro in livros %}
     <h2>
@@ -21,5 +19,4 @@
       {{ livro.get_status_display|truncatewords:30|linebreaks }}
     </p>
   {% endfor %}
-</body>
-</html>
+{% endblock %}
