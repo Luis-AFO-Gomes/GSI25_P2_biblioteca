@@ -1,6 +1,100 @@
+## ***Antes de começar...***<br>
+... o que pode ser feito logo no inicio do projecto, imediatamente após criar o ambiente virtual - ```python -m venv .venv``` - e instalar o Django - ```pip install django``` - é definir um ficheiro de configurações para o ambiente de trabalho, para evitar ter que configurar o ambiente a cada nova sessão de trabalho. 
+
+Um ficheiro de configurações, ou requisitos, contém as dependências do projecto, ou seja, os pacotes e as respectivas versões necessárias para o correcto funcionamento do projecto. 
+
+Existem dois formatos de ficheiro de requisitos: 
+- ```requirements.txt``` - formato mais simples, apenas lista os pacotes e as versões, sem informação adicional
+- ```Pipfile``` - (extensão ```.toml```) formato mais avançado, inclui informação adicional como dependências de desenvolvimento, scripts de execução, etc.
+
+Em ambos os casos, os ficheiros de requisitos podem ser criados para configurações distintas do ambiente de trabalho, e.g. desenvolvimento, testes, produção, etc.
+
+Os ficheiros de requisitos são sempre colocados na raiz do projecto, ou seja, no mesmo nível do ficheiro ```manage.py```.
+
+### Exemplos
+#### requirements.txt
+1. **Ficheiro base**, utilizável para desenvolvimento e produção, inclui as dependências principais do projecto:
+```
+    asgiref==3.11.1
+    Django==5.2.14
+    sqlparse==0.5.5
+    tzdata==2026.2
+    pyodbc
+    python-dotenv==1.1.0
+```
+2. **Ficheiro de desenvolvimento**, inclui as dependências de desenvolvimento, e.g. ferramentas de teste, debug, etc.:
+```
+    -r requirements.txt
+    pytest
+    pytest-django
+    behave==1.3.3
+```
+a linha inicial ```-r requirements.txt``` indica que as dependÊncias gerais são executadas antes das específicas, garantindo que o ambiente de desenvolvimento é coerente com o de produção. ***Não é necessário executar o ficheiro base***
+
+3. O **ficheiro de requisitos pode ser gerado** a partir de um ambiente já preparado, utilizando o comando:
+```
+    [python -m] pip freeze > requirements.txt
+```
+4. Para **instalar as dependências** a partir de um ficheiro de requisitos, utilizar o comando:
+```
+    [python -m] pip install -r requirements.txt
+```
+Este comando deve ser executado sempre que haja alterações relevantes nas dependências do projecto - e.g. adição de um novo pacote, atualização de versão, etc. - ou sempre que se inicia um novo ambiente de trabalho.
+
+#### Pipfile (.toml)
+Por padrão, o ficheiro deve ter o nome ```pyproject.toml```
+Por comparação com  o caso anterior, este formato não requer a criação de ficheiros distintos para cada configuração do ambiente de trabalho, existem secções específicas para cada tipo de dependências - e.g. ```[project]``` para dependências gerais, e ```[project.optional-dependencies]``` para dependências de opcionais - e podem ser utilizadas secções nominais para definir ambientes particulares - p.e. secção ```"dev"``` no exemplo abaixo para dependências de desenvolvimento.
+1. **Ficheiro base**, utilizável para desenvolvimento e produção, inclui as dependências principais do projecto:
+```
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biblioteca"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "Django==5.2.14",
+    "pyodbc",
+    "python-dotenv==1.1.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-django",
+    "behave==1.3.3"
+]
+```
+a secção ```[build-system]``` tem instruções para o processo de construção do projecto, indicando as dependências necessárias para a construção e o backend a utilizar. 
+
+2. Para **instalar as dependências** a partir de um ficheiro de requisitos, utilizar um dos comandos:
+   1. para instalar **apenas** as dependências gerais:
+   ```
+    [python -m] pip install -e .
+   ```
+   (atenção ao ponto - '.' no final que indica a localização do ficheiro de requisitos)
+   
+   ou
+   ```
+    [python -m] pip install -r pyproject.toml
+   ```
+   2. para instalar **todas** as dependências, incluindo as de desenvolvimento:
+   ```
+    python -m pip install -e ".[dev]"
+    ```
+    ou
+    ```
+    [python -m] pip install -r pyproject.toml[dev]
+   ```
+
+O formato ```pipfile``` é mais avançado e flexível, permitindo o uso de scripts de execução, definição de ambientes específicos, etc. Por outro lado, o formato ```requirements.txt``` é mais simples e amplamente utilizado, sendo suficiente para a maioria dos casos.
+A escolha do formato a utilizar depende das necessidades do projecto, da dispersão e homogeneidade de ambientes onde venha ser utilizado, e da preferência pessoal.
+
 ## Parte III - Admin Site
 - ponto prévio
-  Caso ainda não te nha sido criado, definir admin/superuser
+  Caso ainda não tenha sido criado, definir admin/superuser
   No terminal, executar:
 
   ```python manage.py createsuperuser```
