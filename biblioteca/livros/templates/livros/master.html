@@ -1,21 +1,22 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{% endblock %}</title>
+  <title>{% block title %}Biblioteca Publica{% endblock %}</title>
   <link href="{% static 'style/biblioteca.css' %}" rel="stylesheet">
 </head>
 <body>
-  <div id="content">
-    {% block content %}
-    {% endblock %}
-  </div>
-  <div id="sidebar">
-    <h2>Biblioteca Publica</h2>
-    <p>Bem-vindo à Biblioteca Publica.</p>
-  </div>
+  <header class="site-header">
+    <a class="brand" href="{% url 'livros:home_livros' %}">Biblioteca Publica</a>
+    <nav class="site-nav" aria-label="Navegacao principal">
+      <a href="{% url 'livros:home_livros' %}">Inicio</a>
+      <a href="{% url 'livros:lista_livros' %}">Catalogo</a>
+    </nav>
+  </header>
+  <main id="content">
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>
-    
