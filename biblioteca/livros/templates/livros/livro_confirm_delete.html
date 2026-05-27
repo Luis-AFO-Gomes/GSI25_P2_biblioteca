@@ -1,0 +1,35 @@
+{% extends 'livros/master.html' %}
+{% block title %}Apagar livro{% endblock %}
+{% block content %}
+  <section class="page-title">
+    <p class="eyebrow">Biblioteca Publica</p>
+    <h1>Apagar livro</h1>
+  </section>
+
+  <section class="record-panel">
+    <p class="confirm-text">
+      Confirma que pretende apagar permanentemente o livro "{{ livro.titulo }}"?
+    </p>
+    <dl class="record-grid compact">
+      <div>
+        <dt>ISBN</dt>
+        <dd>{{ livro.isbn }}</dd>
+      </div>
+      <div>
+        <dt>Editora</dt>
+        <dd>{{ livro.editora }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ livro.get_status_display }}</dd>
+      </div>
+    </dl>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button class="button button-danger" type="submit">Confirmar delete</button>
+        <a class="button button-secondary" href="{% url 'livros:detalhe_livro' livro.isbn %}">Cancelar</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

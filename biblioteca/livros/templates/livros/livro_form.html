@@ -1,0 +1,93 @@
+{% extends 'livros/master.html' %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block content %}
+  <section class="page-title page-title-actions">
+    <div>
+      <p class="eyebrow">Biblioteca Publica</p>
+      <h1>{{ page_title }}</h1>
+    </div>
+    <a class="button button-secondary" href="{% url 'livros:lista_livros' %}">Voltar</a>
+  </section>
+
+  <section class="record-panel">
+    {% if mode == 'detail' %}
+      <div class="detail-layout">
+        <div class="detail-side">
+          <div class="book-image-placeholder" aria-label="Imagem do livro">
+            <span>Imagem</span>
+          </div>
+          <div class="detail-status">
+            <span class="status status-inline">{{ livro.get_status_display }}</span>
+          </div>
+          <div class="detail-actions">
+            <a class="button button-primary" href="{% url 'livros:editar_livro' livro.isbn %}">Editar</a>
+            <a class="button button-danger" href="{% url 'livros:apagar_livro' livro.isbn %}">Apagar</a>
+          </div>
+        </div>
+        <dl class="record-grid detail-fields">
+          <div>
+            <dt>ISBN</dt>
+            <dd>{{ livro.isbn }}</dd>
+          </div>
+          <div>
+            <dt>Titulo</dt>
+            <dd>{{ livro.titulo }}</dd>
+          </div>
+          <div>
+            <dt>Idioma</dt>
+            <dd>{{ livro.idioma }}</dd>
+          </div>
+          <div>
+            <dt>Tipo</dt>
+            <dd>{{ livro.tipo }}</dd>
+          </div>
+          <div>
+            <dt>Tema</dt>
+            <dd>{{ livro.tema }}</dd>
+          </div>
+          <div>
+            <dt>Editora</dt>
+            <dd>{{ livro.editora }}</dd>
+          </div>
+          <div>
+            <dt>Data de publicacao</dt>
+            <dd>{{ livro.data_pub }}</dd>
+          </div>
+          <div>
+            <dt>Original</dt>
+            <dd>{% if livro.original %}Sim{% else %}Nao{% endif %}</dd>
+          </div>
+        </dl>
+      </div>
+    {% else %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="form-grid">
+          {% for field in form %}
+            <label class="{% if field.field.widget.input_type == 'checkbox' %}checkbox-field{% endif %}">
+              <span>{{ field.label }}{% if field.field.required %} *{% endif %}</span>
+              {{ field }}
+              {% if field.help_text %}
+                <small>{{ field.help_text }}</small>
+              {% endif %}
+              {% if field.errors %}
+                <span class="field-errors">{{ field.errors }}</span>
+              {% endif %}
+            </label>
+          {% endfor %}
+        </div>
+        <div class="form-actions">
+          <button class="button button-primary" type="submit">{{ submit_label }}</button>
+          {% if mode == 'edit' %}
+            <a class="button button-secondary" href="{% url 'livros:detalhe_livro' livro.isbn %}">Cancelar</a>
+          {% else %}
+            <a class="button button-secondary" href="{% url 'livros:lista_livros' %}">Cancelar</a>
+          {% endif %}
+        </div>
+      </form>
+    {% endif %}
+  </section>
+{% endblock %}

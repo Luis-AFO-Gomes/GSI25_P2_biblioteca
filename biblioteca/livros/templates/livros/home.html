@@ -32,27 +32,5 @@
     <button class="button" type="button">Filtrar</button>
   </section>
 
-  <section class="book-grid" aria-label="Livros registados">
-    {% for livro in livros %}
-      <article class="book-card">
-        <div class="book-cover">
-          <span class="tag tag-left">{{ livro.tipo }}</span>
-          <span class="tag tag-right">{{ livro.tema }}</span>
-          <h2>{{ livro.titulo }}</h2>
-        </div>
-        <div class="book-details">
-          <h3>{{ livro.titulo }}</h3>
-          <p class="book-author">{{ livro.editora }}</p>
-          <p class="book-isbn">ISBN: {{ livro.isbn }}</p>
-          <p class="status">{{ livro.get_status_display }}</p>
-          <div class="book-actions">
-            <button class="button button-primary" type="button">Request</button>
-            <button class="button button-secondary" type="button">Details</button>
-          </div>
-        </div>
-      </article>
-    {% empty %}
-      <p>Ainda nao existem livros registados.</p>
-    {% endfor %}
-  </section>
+  {% include 'livros/_book_grid.html' with grid_label='Livros registados' %}
 {% endblock %}

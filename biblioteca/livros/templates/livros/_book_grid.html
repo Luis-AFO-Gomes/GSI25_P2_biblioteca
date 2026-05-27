@@ -1,0 +1,21 @@
+<section class="book-grid" aria-label="{{ grid_label }}">
+  {% for livro in livros %}
+    <a class="book-card" href="{% url 'livros:detalhe_livro' livro.isbn %}" aria-label="Ver detalhes de {{ livro.titulo }}">
+      <article>
+        <div class="book-cover">
+          <span class="tag tag-left">{{ livro.tipo }}</span>
+          <span class="tag tag-right">{{ livro.tema }}</span>
+          <h2>{{ livro.titulo }}</h2>
+        </div>
+        <div class="book-details">
+          <h3>{{ livro.titulo }}</h3>
+          <p class="book-author">{{ livro.editora }}</p>
+          <p class="book-isbn">ISBN: {{ livro.isbn }}</p>
+          <p class="status">{{ livro.get_status_display }}</p>
+        </div>
+      </article>
+    </a>
+  {% empty %}
+    <p>Ainda nao existem livros registados.</p>
+  {% endfor %}
+</section>

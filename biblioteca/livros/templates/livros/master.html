@@ -16,7 +16,17 @@
     </nav>
   </header>
   <main id="content">
+    {% if messages %}
+      <section class="messages" aria-label="Mensagens">
+        {% for message in messages %}
+          <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      </section>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
+  <footer class="site-footer">
+    <span>Biblioteca Publica</span>
+  </footer>
 </body>
 </html>

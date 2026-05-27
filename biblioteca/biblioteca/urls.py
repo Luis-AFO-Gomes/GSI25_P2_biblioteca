@@ -20,5 +20,7 @@ from django.urls import include, path
 urlpatterns = [
     path('', include('livros.urls', namespace='livros')),
     path('admin/', admin.site.urls),
-    path('livros/', include('livros.urls', namespace='livros')),
+    path('livros/', include(('livros.urls', 'livros'), namespace='livros_prefix')),
 ]
+
+handler404 = 'livros.views.page_not_found'

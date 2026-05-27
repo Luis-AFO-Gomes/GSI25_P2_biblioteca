@@ -1,241 +1,195 @@
-## ***Antes de começar...***<br>
-... o que pode ser feito logo no inicio do projecto, imediatamente após criar o ambiente virtual - ```python -m venv .venv``` - e instalar o Django - ```pip install django``` - é definir um ficheiro de configurações para o ambiente de trabalho, para evitar ter que configurar o ambiente a cada nova sessão de trabalho. 
+# Biblioteca
 
-Um ficheiro de configurações, ou requisitos, contém as dependências do projecto, ou seja, os pacotes e as respectivas versões necessárias para o correcto funcionamento do projecto. 
+Projecto Django para um catalogo simples de biblioteca publica. A aplicacao gere livros (`Livro`) e usa os dados de editoras (`Editora`) ja existentes na base de dados.
 
-Existem dois formatos de ficheiro de requisitos: 
-- ```requirements.txt``` - formato mais simples, apenas lista os pacotes e as versões, sem informação adicional
-- ```Pipfile``` - (extensão ```.toml```) formato mais avançado, inclui informação adicional como dependências de desenvolvimento, scripts de execução, etc.
+## Funcionalidades Actuais
 
-Em ambos os casos, os ficheiros de requisitos podem ser criados para configurações distintas do ambiente de trabalho, e.g. desenvolvimento, testes, produção, etc.
+- Listagem de livros na pagina inicial e na pagina de catalogo.
+- Consulta de detalhes de um livro em modo apenas leitura.
+- Insercao de novos livros.
+- Edicao de livros existentes.
+- Eliminacao permanente de livros, depois de uma pagina de confirmacao.
+- Mensagens de confirmacao apos insercao, actualizacao e eliminacao.
+- Pagina 404 com o layout normal do site para registos nao encontrados, quando o tratamento 404 personalizado esta activo.
 
-Os ficheiros de requisitos são sempre colocados na raiz do projecto, ou seja, no mesmo nível do ficheiro ```manage.py```.
+## Limitacoes
 
-### Exemplos
-#### requirements.txt
-1. **Ficheiro base**, utilizável para desenvolvimento e produção, inclui as dependências principais do projecto:
+- Nao existe interface para gerir `Editora`. As editoras devem ser geridas atraves do site de administracao Django ou de outra ferramenta de administracao SQLite.
+- A eliminacao de livros e permanente nesta fase, apenas para demonstracao. Numa versao futura, o livro devera ser ocultado/desactivado sem remover o registo da base de dados.
+- Os controlos de pesquisa e filtro no catalogo ainda sao apenas visuais.
+- A base de dados SQLite e local ao projecto.
+- O desenho das paginas e temporario e segue o aspecto visual ja existente ate existir um wireframe final.
+
+## Estrutura De Pastas
+
+```text
+GSI25_P2_biblioteca/
+├── README.md
+├── requirements.txt
+├── requirements-dev.txt
+├── pyProject.toml
+├── image.png
+└── biblioteca/
+    ├── manage.py
+    ├── db.sqlite3
+    ├── biblioteca/
+    |   ├── settings.py
+    |   ├── urls.py
+    |   ├── asgi.py
+    |   ├── wsgi.py
+    |   └── __init__.py
+    └── livros/
+        ├── admin.py
+        ├── apps.py
+        ├── forms.py
+        ├── models.py
+        ├── services.py
+        ├── tests.py
+        ├── urls.py
+        ├── views.py
+        ├── migrations/
+        |   ├── 0001_initial.py
+        |   ├── 0002_editora_alter_livro_editora.py
+        |   └── __init__.py
+        ├── static/
+        |   └── style/
+        |       └── biblioteca.css
+        └── templates/
+            └── livros/
+                ├── 404.html
+                ├── _book_grid.html
+                ├── home.html
+                ├── livro_confirm_delete.html
+                ├── livro_form.html
+                ├── livros.html
+                └── master.html
 ```
-    asgiref==3.11.1
-    Django==5.2.14
-    sqlparse==0.5.5
-    tzdata==2026.2
-    pyodbc
-    python-dotenv==1.1.0
-```
-2. **Ficheiro de desenvolvimento**, inclui as dependências de desenvolvimento, e.g. ferramentas de teste, debug, etc.:
-```
-    -r requirements.txt
-    pytest
-    pytest-django
-    behave==1.3.3
-```
-a linha inicial ```-r requirements.txt``` indica que as dependÊncias gerais são executadas antes das específicas, garantindo que o ambiente de desenvolvimento é coerente com o de produção. ***Não é necessário executar o ficheiro base***
 
-3. O **ficheiro de requisitos pode ser gerado** a partir de um ambiente já preparado, utilizando o comando:
+## Ficheiros Principais
+
+- `biblioteca/manage.py`: ponto de entrada para comandos Django.
+- `biblioteca/biblioteca/settings.py`: configuracao do projecto, apps instaladas, base de dados, ficheiros estaticos e middleware.
+- `biblioteca/biblioteca/urls.py`: rotas principais do projecto, incluindo as rotas da app e o handler 404.
+- `biblioteca/livros/models.py`: modelos de dados `Livro` e `Editora`.
+- `biblioteca/livros/admin.py`: configuracao do site de administracao para livros e editoras.
+- `biblioteca/livros/urls.py`: rotas da app para catalogo e CRUD de livros.
+- `biblioteca/livros/views.py`: vistas baseadas em classes para listar, consultar, criar, editar, apagar e apresentar erros 404.
+- `biblioteca/livros/templates/livros/master.html`: estrutura comum das paginas, com cabecalho, navegacao, mensagens, rodape e bloco de conteudo.
+- `biblioteca/livros/templates/livros/_book_grid.html`: grelha reutilizavel de cartoes de livros.
+- `biblioteca/livros/templates/livros/livro_form.html`: pagina partilhada para detalhe, insercao e edicao.
+- `biblioteca/livros/templates/livros/livro_confirm_delete.html`: pagina de confirmacao de eliminacao.
+- `biblioteca/livros/static/style/biblioteca.css`: estilos do site.
+
+## Ficheiros Especiais
+
+### `forms.py`
+
+O ficheiro `forms.py` contem classes de formulario Django. Estas classes fazem a ligacao entre a interface de utilizador e os modelos de dados sem obrigar as views ou os templates a conhecerem todos os detalhes de validacao e apresentacao dos campos.
+
+Neste projecto, `LivroForm` e baseado no modelo `Livro`, definido em `models.py`, mas e usado pelas views e templates para construir os campos HTML, aplicar validacoes basicas e controlar comportamentos de UI, como impedir a alteracao do ISBN durante a edicao.
+
+Esta separacao ajuda a manter responsabilidades claras:
+
+- `models.py` define estrutura e persistencia dos dados.
+- `forms.py` define como esses dados sao recolhidos e validados na interface.
+- `views.py` coordena o pedido HTTP, o formulario e a resposta.
+- `templates` apresentam a interface visual ao utilizador.
+
+### `services.py`
+
+O ficheiro `services.py` contem classes e funcoes orientadas para logica de negocio ou acesso controlado aos dados. A ideia e evitar que as views fiquem carregadas com regras de procura, tratamento de erros ou operacoes de negocio.
+
+Neste projecto, `LivroService` centraliza operacoes como listar livros, obter um livro por ISBN e apagar um livro. Internamente, continua a usar `models.py` para aceder a base de dados, mas oferece as views uma interface mais simples e preparada para crescer.
+
+Esta organizacao facilita a evolucao da aplicacao:
+
+- `models.py` continua focado na persistencia.
+- `services.py` concentra regras e operacoes de negocio.
+- `views.py` fica mais simples, tratando sobretudo de fluxo HTTP.
+- `templates` ficam focados na experiencia visual e nao na logica de dados.
+
+## Instalacao
+
+Criar e activar um ambiente virtual a partir da raiz do repositorio:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
-    [python -m] pip freeze > requirements.txt
+
+Instalar dependencias de execucao:
+
+```powershell
+python -m pip install -r requirements.txt
 ```
-4. Para **instalar as dependências** a partir de um ficheiro de requisitos, utilizar o comando:
+
+Para dependencias de desenvolvimento:
+
+```powershell
+python -m pip install -r requirements-dev.txt
 ```
-    [python -m] pip install -r requirements.txt
+
+## Base De Dados
+
+O projecto usa SQLite:
+
+```text
+biblioteca/db.sqlite3
 ```
-Este comando deve ser executado sempre que haja alterações relevantes nas dependências do projecto - e.g. adição de um novo pacote, atualização de versão, etc. - ou sempre que se inicia um novo ambiente de trabalho.
 
-#### Pipfile (.toml)
-Por padrão, o ficheiro deve ter o nome ```pyproject.toml```
-Por comparação com  o caso anterior, este formato não requer a criação de ficheiros distintos para cada configuração do ambiente de trabalho, existem secções específicas para cada tipo de dependências - e.g. ```[project]``` para dependências gerais, e ```[project.optional-dependencies]``` para dependências de opcionais - e podem ser utilizadas secções nominais para definir ambientes particulares - p.e. secção ```"dev"``` no exemplo abaixo para dependências de desenvolvimento.
-1. **Ficheiro base**, utilizável para desenvolvimento e produção, inclui as dependências principais do projecto:
-```
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+Aplicar migracoes quando necessario:
 
-[project]
-name = "biblioteca"
-version = "0.1.0"
-requires-python = ">=3.10"
-dependencies = [
-    "Django==5.2.14",
-    "pyodbc",
-    "python-dotenv==1.1.0"
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest",
-    "pytest-django",
-    "behave==1.3.3"
-]
-```
-a secção ```[build-system]``` tem instruções para o processo de construção do projecto, indicando as dependências necessárias para a construção e o backend a utilizar. 
-
-2. Para **instalar as dependências** a partir de um ficheiro de requisitos, utilizar um dos comandos:
-   1. para instalar **apenas** as dependências gerais:
-   ```
-    [python -m] pip install -e .
-   ```
-   (atenção ao ponto - '.' no final que indica a localização do ficheiro de requisitos)
-   
-   ou
-   ```
-    [python -m] pip install -r pyproject.toml
-   ```
-   2. para instalar **todas** as dependências, incluindo as de desenvolvimento:
-   ```
-    python -m pip install -e ".[dev]"
-    ```
-    ou
-    ```
-    [python -m] pip install -r pyproject.toml[dev]
-   ```
-
-O formato ```pipfile``` é mais avançado e flexível, permitindo o uso de scripts de execução, definição de ambientes específicos, etc. Por outro lado, o formato ```requirements.txt``` é mais simples e amplamente utilizado, sendo suficiente para a maioria dos casos.
-A escolha do formato a utilizar depende das necessidades do projecto, da dispersão e homogeneidade de ambientes onde venha ser utilizado, e da preferência pessoal.
-
-## Parte III - Admin Site
-- ponto prévio
-  Caso ainda não tenha sido criado, definir admin/superuser
-  No terminal, executar:
-
-  ```python manage.py createsuperuser```
-
-  O python irá solicitar nome de utilizador, email e palavra-passe, com confirmação.<br>
-  Todos os campos são obrigatórios<br>
-  Para testar a configuração, pode-se aceder ao site de administração em ```http://127.0.0.1:8000/admin``` e fazer login com as credenciais inseridas<br>
-  ![alt text](image.png)
-  Ajustar o endereço ao utilizado em ```runserver```</small>
-
-### Criar uma classe personalizada 
-- As classes/modelos são criadas em ```models.py``` dentro da pasta da App ('livros' no nosso exemplo):<br>
-  Classe [Livro](.\biblioteca\livros\models.py)
-
-  Elementos importantes na classe:
-  1. ```models.«data type»``` indica tipo de dados do atributo
-  2.  ```unique=True, primary_key=True``` indicam chave unica e chave primaria respectivamente
-  3.  ```class Status(models.TextChoices):``` indica um tipo enumerado a utilizar como valores para um atributo da classe
-    em ```SUGERIDO = 'S', 'Sugerido'```:<br>
-    **SUGERIDO** indica o nome do valor;<br>
-    **'S'** a chave de registo;<br> 
-    **'Sugerido'** o valor do registo, utilizado para UI;<br>
-  4. O valor enumerado é chamado por:
-    ```
-        status = models.CharField(
-            max_length=1,
-            choices=Status.choices,
-            default=Status.DISPONIVEL,
-        )
-    ```
-    onde:<br>
-    ```status``` indica o nome do atributo;<br>
-    ```max_length``` o tamanho <br>
-    ```choices``` a lista de enumeração dos valores a utilizar - **Status**.choices. No exemplo, o nome do campo é igual ao da classe enumerada, mas isso não é obrigatório<br>
-    ```default``` valor por defeito
-
-  5. ```(default=timezone.now)``` define um valor por defeito para o atributo (neste caso, a data actual do sistema), caso um não seja indicado na inserção;
-  6. ```Class Meta:``` define meta valores e comportamentos para a classe:
-     1. ```ordering``` define ordenação padrão da lista a apresentar no UI padrão
-     2. ```indexes``` define indices de ordenação da tabela 
-
-### 'Migrar' o modelo para base de dados
-Usando ORM, o python irá gerar a base de dados a partir dos modelos definidos para a App num processo semi-automático
-1. gerar a migração:
-```
-python manage.py makemigrations livros
-```
-É gerado um ficheiro ```nnnn_«nome».py``` na pasta ```livros\migrations```<br>
-O numero é incrementado a cada nova migração<br>
-Não alterar nem apagar estes ficheiros, o python irá geri-los de acordo com as necessidades
-
-2. validar o modelo de migração gerado
-```
-python manage.py sqlmigrate livros nnnn
-```
-3. aplicar a migração
-```
+```powershell
+cd biblioteca
 python manage.py migrate
 ```
-**Nota** este processo de migração tem que ser repetido a cada alteração relevante do modelo
 
-### Registar a classe/***model*** na app de administração
-Adicionar ao ficheiro ```livros\admin.py```:
-```
-from .models import Livro
+Criar utilizador de administracao, se necessario:
 
-@admin.register(Livro)
-```
-e adicionar uma vista personalizada para apresentação na página de administração
-```
-class LivroAdmin(admin.ModelAdmin):
-    list_display = ('isbn', 'titulo', 'idioma', 'tipo', 'tema', 'editora', 'data_pub', 'original', 'status', 'data_add')
-    search_fields = ('isbn', 'titulo')
-    list_filter = ('tipo', 'tema', 'status')
-    prepopulated_fields = {'tema': ('tipo',)}
-```
-onde:<br>
-    ```list_display``` indica as colunas a apresentar, não tem que ser todos os atributos da classe<br>
-    ```search_fields``` campos de pesquisa<br>
-    ```list_filter``` campos ordenação<br>
-    ```prepopulated_fields``` campos com preenchimento ligado, 'tema' é preenchido com valor de 'tipo', pode ser alterado<br>
-Só neste ponto o site de administração apresentará a página de livros. No entanto, é necessário...
-
-### Confirmar registo de URL de administração
-Confirmar que na secção ```[urlpatterns]``` do ficheiro ```biblioteca\urls.py``` tem o registo:
-```
-path('admin/', admin.site.urls),
-```
-**ATENÇÃO** o registo é no ficheiro ```urls.py``` na root do projecto, não no da app
-
-## Parte III multiplos objectos e views personalizadas
-
-### Definir uma 2ª classe: editora
-No ficheiro ```livro\models.py``` adicionar a classe [editora]:
-```
-class Editora(models.Model):
-    nipc = models.CharField(max_length=9, unique=True, primary_key=True)
-    nome = models.CharField(max_length=100)
-    contacto = models.CharField(max_length=100)
-    morada = models.CharField(max_length=200)
-    class Meta:
-        ordering = ['nipc']
-        indexes = [
-            models.Index(fields=['nipc']),
-            models.Index(fields=['nome']),
-        ]
-
-    def __str__(self):
-        return self.nome
-```
-### Adicionar FK de livro para editora
-Ainda no mesmo ficheiro, alterar o atributo ```editora``` para:
-```
-editora = models.ForeignKey(Editora, to_field='nipc', on_delete=models.PROTECT)
+```powershell
+python manage.py createsuperuser
 ```
 
-### Actualizar as dependências para incluir a nova classe
-De momento, o importante é actualizar o ficheiro ```admin.py``` para incluir a lista de editoras na interface de administração
-Registar a classe:
-```
-@admin.register(Editora)
-```
-E definir a lista de tabela:
-```
-class EditoraAdmin(admin.ModelAdmin):
-    list_display = ('nipc', 'nome', 'contacto', 'morada')
-    search_fields = ('nipc', 'nome')
-    list_filter = ('nome',)
-```
-**Nota**: não esquecer de actualizar o ***import*** de ```.models.py```
+Site de administracao:
 
-### Migrar...
-Aceder à página de administração para validar que a estrutura de dados está correcta
+```text
+http://127.0.0.1:8000/admin/
+```
 
-### Parte IV - Views e templates
-Criar uma view personalizada para a página de livros:
-[views.py](.\biblioteca\livros\views.py)<br>
-É necessário iportar a classe [Livros] para a view poder aceder à base de dados e apresentar os livros registados
+## Executar
 
-O render da página pode gerar erro caso o dataset esteja vazio. Para evitar este erro pode-se adicionar uma view de especifica para este caso:
-```Livro.existentes```
+A partir da pasta interior `biblioteca`:
 
-Criar um template para a página de livros:
-[livros.html](.\biblioteca\livros\templates\livros\livros.html)
+```powershell
+python manage.py runserver
+```
+
+Abrir:
+
+```text
+http://127.0.0.1:8000/
+```
+
+Paginas uteis:
+
+- Inicio: `http://127.0.0.1:8000/`
+- Catalogo: `http://127.0.0.1:8000/catalogo/`
+- Novo livro: `http://127.0.0.1:8000/livro/novo/`
+- Administracao: `http://127.0.0.1:8000/admin/`
+
+As mesmas rotas da app tambem estao disponiveis com o prefixo `/livros/`, porque a configuracao principal inclui a app na raiz e em `/livros/`.
+
+## Testar E Validar
+
+Executar verificacoes do Django:
+
+```powershell
+cd biblioteca
+python manage.py check
+```
+
+Executar testes:
+
+```powershell
+python manage.py test
+```
