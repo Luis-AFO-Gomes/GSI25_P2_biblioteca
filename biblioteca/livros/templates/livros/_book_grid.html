@@ -8,7 +8,7 @@
           <h2>{{ livro.titulo }}</h2>
         </div>
         <div class="book-details">
-          <h3>{{ livro.titulo }}</h3>
+          <h4>{{ livro.get_autores }}</h4>
           <p class="book-author">{{ livro.editora }}</p>
           <p class="book-isbn">ISBN: {{ livro.isbn }}</p>
           <p class="status">{{ livro.get_status_display }}</p>

@@ -11,14 +11,14 @@ class LivroService:
     @staticmethod
     def listar():
         try:
-            return Livro.objects.select_related('editora').all()
+            return Livro.objects.select_related('editora').prefetch_related('autor').all()
         except DatabaseError as exc:
             raise Http404('Nao foi possivel obter a lista de livros.') from exc
 
     @staticmethod
     def obter_por_isbn(isbn):
         try:
-            return Livro.objects.select_related('editora').get(isbn=isbn)
+            return Livro.objects.select_related('editora').prefetch_related('autor').get(isbn=isbn)
         except ObjectDoesNotExist as exc:
             raise Http404('Livro nao encontrado.') from exc
         except DatabaseError as exc:

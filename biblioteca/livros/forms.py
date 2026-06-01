@@ -11,6 +11,7 @@ class LivroForm(forms.ModelForm):
         fields = [
             'isbn',
             'titulo',
+            'autor',
             'idioma',
             'tipo',
             'tema',
@@ -22,6 +23,7 @@ class LivroForm(forms.ModelForm):
         labels = {
             'isbn': 'ISBN',
             'titulo': 'Titulo',
+            'autor': 'Autores',
             'idioma': 'Idioma',
             'tipo': 'Tipo',
             'tema': 'Tema',

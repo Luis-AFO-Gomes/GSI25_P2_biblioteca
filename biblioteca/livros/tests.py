@@ -1,11 +1,19 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import Editora, Livro
+from .models import Autor, Editora, Livro, Tema, ZonasGeograficas
 
 
 class LivroCrudTests(TestCase):
     def setUp(self):
+        self.zona = ZonasGeograficas.objects.create(sigla='PT', nome='Portugal')
+        self.autor = Autor.objects.create(
+            id='A001',
+            nome='Autor Teste',
+            nacionalidade=self.zona,
+        )
+        self.tema = Tema.objects.create(sigla='DJG', nome='Django')
+        self.outro_tema = Tema.objects.create(sigla='PY', nome='Python')
         self.editora = Editora.objects.create(
             nipc='123456789',
             nome='Editora Teste',
@@ -17,12 +25,13 @@ class LivroCrudTests(TestCase):
             titulo='Livro Existente',
             idioma='PT',
             tipo='Manual',
-            tema='Django',
+            tema=self.tema,
             editora=self.editora,
             data_pub='2026-01-10',
             original=True,
             status=Livro.Status.DISPONIVEL,
         )
+        self.livro.autor.set([self.autor])
 
     def test_detail_page_uses_existing_book_data(self):
         response = self.client.get(reverse('livros:detalhe_livro', kwargs={'isbn': self.livro.isbn}))
@@ -39,7 +48,8 @@ class LivroCrudTests(TestCase):
                 'titulo': 'Livro Novo',
                 'idioma': 'PT',
                 'tipo': 'Romance',
-                'tema': 'Ficcao',
+                'autor': [self.autor.id],
+                'tema': self.tema.sigla,
                 'editora': self.editora.nipc,
                 'data_pub': '2026-02-15',
                 'original': 'on',
@@ -60,7 +70,8 @@ class LivroCrudTests(TestCase):
                 'titulo': 'Titulo Atualizado',
                 'idioma': 'PT',
                 'tipo': 'Manual',
-                'tema': 'Python',
+                'autor': [self.autor.id],
+                'tema': self.outro_tema.sigla,
                 'editora': self.editora.nipc,
                 'data_pub': '2026-01-10',
                 'original': 'on',
