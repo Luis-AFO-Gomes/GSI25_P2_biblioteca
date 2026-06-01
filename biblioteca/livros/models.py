@@ -16,6 +16,19 @@ class Editora(models.Model):
     def __str__(self):
         return self.nome
 
+class Tema(models.Model):
+    sigla = models.CharField(max_length=6, unique=True, primary_key=True)
+    nome = models.CharField(max_length=100)
+    class Meta:
+        ordering = ['nome']
+        indexes = [
+            models.Index(fields=['nome']),
+            models.Index(fields=['sigla']),
+        ]
+
+    def __str__(self):
+        return self.nome
+
 class Livro(models.Model):
     class Status(models.TextChoices):
         SUGERIDO = 'S', 'Sugerido'
@@ -27,7 +40,7 @@ class Livro(models.Model):
     titulo = models.CharField(max_length=200)
     idioma = models.CharField(max_length=3)
     tipo = models.CharField(max_length=50)
-    tema = models.CharField(max_length=100)
+    tema = models.ForeignKey(Tema, to_field='sigla', on_delete=models.PROTECT)
     editora = models.ForeignKey(Editora, to_field='nipc', on_delete=models.PROTECT)
     data_pub = models.DateField()
     original = models.BooleanField(default=True)
