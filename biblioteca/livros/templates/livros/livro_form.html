@@ -3,8 +3,8 @@
 {% block content %}
   <section class="page-title page-title-actions">
     <div>
-      <p class="eyebrow">Biblioteca Publica</p>
-      <h1>{{ page_title }}</h1>
+      <p class="eyebrow">{{ page_title }}</p>
+      <h1> {{ livro.titulo }}</h1>
     </div>
     <a class="button button-secondary" href="{% url 'livros:lista_livros' %}">Voltar</a>
   </section>
@@ -29,10 +29,11 @@
             <dt>ISBN</dt>
             <dd>{{ livro.isbn }}</dd>
           </div>
-          <div>
+<!--          <div>
             <dt>Titulo</dt>
             <dd>{{ livro.titulo }}</dd>
           </div>
+-->          
           <div>
             <dt>Autores</dt>
             <dd>{{ livro.get_autores }}</dd>
