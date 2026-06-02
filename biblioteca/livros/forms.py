@@ -1,6 +1,27 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 
 from .models import Livro
+
+
+class BibliotecaAuthenticationForm(AuthenticationForm):
+    """Username/password authentication form with Portuguese labels."""
+
+    username = forms.CharField(
+        label='Nome de utilizador',
+        widget=forms.TextInput(attrs={
+            'autofocus': True,
+            'placeholder': 'utilizador01',
+        }),
+    )
+    password = forms.CharField(
+        label='Palavra-passe',
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'current-password',
+            'placeholder': '********',
+        }),
+    )
 
 
 class LivroForm(forms.ModelForm):

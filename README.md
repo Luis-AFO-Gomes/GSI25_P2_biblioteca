@@ -1,24 +1,36 @@
-# Biblioteca
+# Biblioteca - Autenticacao
 
-Projecto Django para um catalogo simples de biblioteca publica. A aplicacao gere livros (`Livro`) e usa os dados de editoras (`Editora`) ja existentes na base de dados.
+Projecto Django para um catalogo simples de biblioteca publica. Esta etapa adiciona autenticacao nativa do Django com utilizadores e grupos geridos atraves do site de administracao.
 
 ## Funcionalidades Actuais
 
-- Listagem de livros na pagina inicial e na pagina de catalogo.
-- Consulta de detalhes de um livro em modo apenas leitura.
-- Insercao de novos livros.
-- Edicao de livros existentes.
-- Eliminacao permanente de livros, depois de uma pagina de confirmacao.
-- Mensagens de confirmacao apos insercao, actualizacao e eliminacao.
-- Pagina 404 com o layout normal do site para registos nao encontrados, quando o tratamento 404 personalizado esta activo.
+- Login com nome de utilizador e palavra-passe usando o sistema nativo `django.contrib.auth`.
+- Logout atraves do menu de utilizador no cabecalho.
+- Redireccionamento de utilizadores autenticados para a pagina de catalogo apos login.
+- Redireccionamento para a pagina de catalogo apos logout.
+- Botao `Login` no cabecalho para visitantes nao autenticados.
+- Botao com o nome do utilizador no cabecalho apos autenticacao.
+- Menu do utilizador com o primeiro grupo associado ao utilizador ou `member` quando nao existe grupo atribuido.
+- Gestao de utilizadores e grupos atraves do site de administracao Django.
+- Permissoes iguais para todos os utilizadores nesta etapa; a diferenciacao por perfil/grupo sera implementada em etapas futuras.
+
+## Perfis E Grupos Planeados
+
+- `Administrators`: grupo previsto para administradores da biblioteca.
+- `Partners`: grupo previsto para parceiros da biblioteca.
+- `Members`: grupo previsto para membros autenticados.
+- `Guest`: perfil implicito para visitantes sem autenticacao.
+
+Nesta etapa, a aplicacao apenas apresenta o primeiro grupo do utilizador no menu. A regra de garantir uma unica associacao de grupo por utilizador ainda nao esta implementada.
 
 ## Limitacoes
 
-- Nao existe interface para gerir `Editora`. As editoras devem ser geridas atraves do site de administracao Django ou de outra ferramenta de administracao SQLite.
-- A eliminacao de livros e permanente nesta fase, apenas para demonstracao. Numa versao futura, o livro devera ser ocultado/desactivado sem remover o registo da base de dados.
-- Os controlos de pesquisa e filtro no catalogo ainda sao apenas visuais.
+- O login aceita apenas nome de utilizador e palavra-passe; autenticacao por email ou provedores externos como Google e Microsoft fica para etapas futuras.
+- Nao existe ainda controlo de permissoes por grupo nas paginas ou nos botoes de accao.
+- Utilizadores sem grupo aparecem com o perfil `member` no cabecalho, mas essa classificacao ainda nao altera o acesso.
+- A pagina de catalogo continua publica para visitantes sem autenticacao.
+- A criacao, edicao e eliminacao de livros ainda nao foram protegidas por permissoes nesta etapa.
 - A base de dados SQLite e local ao projecto.
-- O desenho das paginas e temporario e segue o aspecto visual ja existente ate existir um wireframe final.
 
 ## Estrutura De Pastas
 
@@ -62,38 +74,45 @@ GSI25_P2_biblioteca/
                 ├── livro_confirm_delete.html
                 ├── livro_form.html
                 ├── livros.html
+                ├── login.html
                 └── master.html
 ```
 
 ## Ficheiros Principais
 
 - `biblioteca/manage.py`: ponto de entrada para comandos Django.
-- `biblioteca/biblioteca/settings.py`: configuracao do projecto, apps instaladas, base de dados, ficheiros estaticos e middleware.
-- `biblioteca/biblioteca/urls.py`: rotas principais do projecto, incluindo as rotas da app e o handler 404.
-- `biblioteca/livros/models.py`: modelos de dados `Livro` e `Editora`.
-- `biblioteca/livros/admin.py`: configuracao do site de administracao para livros e editoras.
-- `biblioteca/livros/urls.py`: rotas da app para catalogo e CRUD de livros.
-- `biblioteca/livros/views.py`: vistas baseadas em classes para listar, consultar, criar, editar, apagar e apresentar erros 404.
-- `biblioteca/livros/templates/livros/master.html`: estrutura comum das paginas, com cabecalho, navegacao, mensagens, rodape e bloco de conteudo.
-- `biblioteca/livros/templates/livros/_book_grid.html`: grelha reutilizavel de cartoes de livros.
-- `biblioteca/livros/templates/livros/livro_form.html`: pagina partilhada para detalhe, insercao e edicao.
-- `biblioteca/livros/templates/livros/livro_confirm_delete.html`: pagina de confirmacao de eliminacao.
-- `biblioteca/livros/static/style/biblioteca.css`: estilos do site.
+- `biblioteca/biblioteca/settings.py`: configuracao do projecto, incluindo URLs de login, redireccionamento de login e redireccionamento de logout.
+- `biblioteca/biblioteca/urls.py`: rotas principais do projecto, incluindo as rotas da app, o site de administracao e o handler 404.
+- `biblioteca/livros/forms.py`: formularios Django, incluindo o formulario de autenticacao com rotulos em portugues.
+- `biblioteca/livros/urls.py`: rotas da app para catalogo, autenticacao e CRUD de livros.
+- `biblioteca/livros/views.py`: vistas para login, logout, listar, consultar, criar, editar, apagar e apresentar erros 404.
+- `biblioteca/livros/templates/livros/master.html`: estrutura comum das paginas, com cabecalho, navegacao, menu de autenticacao, mensagens, rodape e bloco de conteudo.
+- `biblioteca/livros/templates/livros/login.html`: pagina de login de utilizador.
+- `biblioteca/livros/static/style/biblioteca.css`: estilos do site, incluindo cabecalho autenticado, menu de utilizador e pagina de login.
+- `biblioteca/livros/tests.py`: testes para CRUD de livros, pagina 404 e fluxo de autenticacao.
 
 ## Ficheiros Especiais
 
 ### `forms.py`
 
-O ficheiro `forms.py` contem classes de formulario Django. Estas classes fazem a ligacao entre a interface de utilizador e os modelos de dados sem obrigar as views ou os templates a conhecerem todos os detalhes de validacao e apresentacao dos campos.
+O ficheiro `forms.py` contem classes de formulario Django. Estas classes fazem a ligacao entre a interface de utilizador e os modelos ou servicos de autenticacao sem obrigar as views ou os templates a conhecerem todos os detalhes de validacao e apresentacao dos campos.
 
-Neste projecto, `LivroForm` e baseado no modelo `Livro`, definido em `models.py`, mas e usado pelas views e templates para construir os campos HTML, aplicar validacoes basicas e controlar comportamentos de UI, como impedir a alteracao do ISBN durante a edicao.
+Nesta etapa, `BibliotecaAuthenticationForm` estende o formulario nativo de autenticacao do Django para manter o login por nome de utilizador e palavra-passe com textos em portugues. O formulario continua a usar a validacao nativa de credenciais do Django.
+
+`LivroForm` continua baseado no modelo `Livro`, definido em `models.py`, e e usado pelas views e templates para construir os campos HTML, aplicar validacoes basicas e controlar comportamentos de UI, como impedir a alteracao do ISBN durante a edicao.
 
 Esta separacao ajuda a manter responsabilidades claras:
 
 - `models.py` define estrutura e persistencia dos dados.
-- `forms.py` define como esses dados sao recolhidos e validados na interface.
-- `views.py` coordena o pedido HTTP, o formulario e a resposta.
+- `forms.py` define como dados e credenciais sao recolhidos e validados na interface.
+- `views.py` coordena o pedido HTTP, os formularios e a resposta.
 - `templates` apresentam a interface visual ao utilizador.
+
+### `views.py`
+
+O ficheiro `views.py` contem as vistas da aplicacao. Para autenticacao, `BibliotecaLoginView` e `BibliotecaLogoutView` reutilizam as vistas nativas do Django, mantendo o comportamento padrao de sessao e seguranca.
+
+O login bem sucedido encaminha o utilizador para o catalogo. O logout termina a sessao e tambem encaminha para o catalogo. As restantes vistas continuam a tratar o fluxo HTTP das paginas de livros.
 
 ### `services.py`
 
@@ -105,8 +124,16 @@ Esta organizacao facilita a evolucao da aplicacao:
 
 - `models.py` continua focado na persistencia.
 - `services.py` concentra regras e operacoes de negocio.
-- `views.py` fica mais simples, tratando sobretudo de fluxo HTTP.
+- `views.py` fica mais simples, tratando sobretudo de fluxo HTTP e autenticacao.
 - `templates` ficam focados na experiencia visual e nao na logica de dados.
+
+## Principais Alteracoes Nos Ficheiros Principais
+
+- `biblioteca/biblioteca/settings.py`: adicionadas as configuracoes `LOGIN_URL`, `LOGIN_REDIRECT_URL` e `LOGOUT_REDIRECT_URL` para centralizar os destinos de login, pos-login e logout.
+- `biblioteca/livros/forms.py`: adicionada a classe `BibliotecaAuthenticationForm`, baseada em `AuthenticationForm`, para manter o login nativo do Django com rotulos e placeholders em portugues.
+- `biblioteca/livros/urls.py`: adicionadas as rotas `login/` e `logout/` para expor o fluxo de autenticacao dentro da app `livros`.
+- `biblioteca/livros/views.py`: adicionadas as classes `BibliotecaLoginView` e `BibliotecaLogoutView`, reutilizando as views nativas do Django para autenticar por nome de utilizador/palavra-passe, terminar sessao e redireccionar para o catalogo.
+- `README.md`: actualizado para documentar a etapa de autenticacao, os grupos planeados, as limitacoes actuais e as rotas uteis de login e administracao.
 
 ## Instalacao
 
@@ -156,6 +183,8 @@ Site de administracao:
 http://127.0.0.1:8000/admin/
 ```
 
+Os utilizadores e grupos devem ser criados e mantidos no site de administracao Django.
+
 ## Executar
 
 A partir da pasta interior `biblioteca`:
@@ -174,6 +203,7 @@ Paginas uteis:
 
 - Inicio: `http://127.0.0.1:8000/`
 - Catalogo: `http://127.0.0.1:8000/catalogo/`
+- Login: `http://127.0.0.1:8000/login/`
 - Novo livro: `http://127.0.0.1:8000/livro/novo/`
 - Administracao: `http://127.0.0.1:8000/admin/`
 

@@ -1,0 +1,44 @@
+{% extends 'livros/master.html' %}
+{% block title %}Login | Biblioteca Publica{% endblock %}
+{% block content %}
+  <section class="auth-card" aria-labelledby="login-title">
+    <h1 id="login-title">Login de utilizador</h1>
+    <p class="auth-intro">Use esta pagina para autenticar o acesso a biblioteca. Depois do login, todos os utilizadores sao encaminhados para o catalogo.</p>
+
+    {% if form.non_field_errors %}
+      <div class="form-errors" role="alert">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form class="auth-form" method="post" action="{% url 'livros:login' %}">
+      {% csrf_token %}
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
+
+      <label for="{{ form.username.id_for_label }}">
+        <span>Nome de utilizador</span>
+        {{ form.username }}
+        {% for error in form.username.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </label>
+
+      <label for="{{ form.password.id_for_label }}">
+        <span>Palavra-passe</span>
+        {{ form.password }}
+        {% for error in form.password.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </label>
+
+      <div class="auth-actions">
+        <button class="button button-primary" type="submit">Entrar</button>
+        <a class="button button-secondary" href="{% url 'livros:lista_livros' %}">Voltar ao catalogo</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

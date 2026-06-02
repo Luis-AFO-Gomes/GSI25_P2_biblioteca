@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group, User
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -107,3 +108,60 @@ class LivroCrudTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, 'Livro nao encontrado.', status_code=404)
         self.assertContains(response, 'Biblioteca Publica', status_code=404)
+
+
+class AuthenticationTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='leitor01', password='segredo-forte')
+
+    def test_login_page_uses_portuguese_username_password_form(self):
+        response = self.client.get(reverse('livros:login'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Login de utilizador')
+        self.assertContains(response, 'Nome de utilizador')
+        self.assertContains(response, 'Palavra-passe')
+        self.assertContains(response, 'Voltar ao catalogo')
+
+    def test_login_authenticates_user_and_redirects_to_catalogue(self):
+        response = self.client.post(
+            reverse('livros:login'),
+            {'username': 'leitor01', 'password': 'segredo-forte'},
+        )
+
+        self.assertRedirects(response, reverse('livros:lista_livros'))
+
+    def test_header_shows_login_button_for_anonymous_user(self):
+        response = self.client.get(reverse('livros:lista_livros'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'href="{reverse("livros:login")}"')
+        self.assertContains(response, 'Login')
+
+    def test_header_shows_username_and_default_member_profile_after_login(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse('livros:lista_livros'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'leitor01')
+        self.assertContains(response, 'member')
+        self.assertContains(response, 'Sair...')
+
+    def test_header_shows_first_group_name_after_login(self):
+        group = Group.objects.create(name='Partners')
+        self.user.groups.add(group)
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse('livros:lista_livros'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Partners')
+
+    def test_logout_ends_session_and_redirects_to_catalogue(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(reverse('livros:logout'))
+
+        self.assertRedirects(response, reverse('livros:lista_livros'))
+        self.assertNotIn('_auth_user_id', self.client.session)
