@@ -1,11 +1,29 @@
 from django.contrib import messages
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
 
-from .forms import LivroForm
+from .forms import BibliotecaAuthenticationForm, LivroForm
 from .models import Livro
 from .services import LivroService
+
+
+class BibliotecaLoginView(LoginView):
+    """Authenticate users with Django's native username/password flow."""
+
+    template_name = 'livros/login.html'
+    authentication_form = BibliotecaAuthenticationForm
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        return reverse_lazy('livros:lista_livros')
+
+
+class BibliotecaLogoutView(LogoutView):
+    """End the current user session and return to the catalogue."""
+
+    next_page = reverse_lazy('livros:lista_livros')
 
 
 class LivroListMixin:
