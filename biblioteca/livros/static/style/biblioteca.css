@@ -79,6 +79,22 @@ a:hover {
     color: var(--primary-dark);
 }
 
+.site-nav a.button {
+    padding: 0 18px;
+    border-radius: 10px;
+    font-size: inherit;
+}
+
+.site-nav a.button-primary {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.site-nav a.button-primary:hover {
+    background: var(--primary-dark);
+    color: #ffffff;
+}
+
 #content {
     width: min(1160px, calc(100% - 32px));
     margin: 0 auto;
