@@ -220,6 +220,11 @@ button.button {
     transform: translateY(-2px);
 }
 
+.book-card-static:hover {
+    border-color: var(--border);
+    transform: none;
+}
+
 .book-cover {
     position: relative;
     min-height: 476px;
@@ -672,6 +677,32 @@ textarea:disabled {
     min-height: 66px;
     border-radius: 12px;
     font-size: 18px;
+}
+
+.subscription-summary {
+    display: grid;
+    gap: 10px;
+    margin: 0 0 24px;
+}
+
+.subscription-summary div {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--soft);
+}
+
+.subscription-summary dt {
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.subscription-summary dd {
+    margin: 0;
+    overflow-wrap: anywhere;
 }
 
 .form-errors {

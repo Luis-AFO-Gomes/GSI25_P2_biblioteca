@@ -19,10 +19,12 @@
           <div class="detail-status">
             <span class="status status-inline">{{ livro.get_status_display }}</span>
           </div>
-          <div class="detail-actions">
-            <a class="button button-primary" href="{% url 'livros:editar_livro' livro.isbn %}">Editar</a>
-            <a class="button button-danger" href="{% url 'livros:apagar_livro' livro.isbn %}">Apagar</a>
-          </div>
+          {% if can_manage_books %}
+            <div class="detail-actions">
+              <a class="button button-primary" href="{% url 'livros:editar_livro' livro.isbn %}">Editar</a>
+              <a class="button button-danger" href="{% url 'livros:apagar_livro' livro.isbn %}">Apagar</a>
+            </div>
+          {% endif %}
         </div>
         <dl class="record-grid detail-fields">
           <div>

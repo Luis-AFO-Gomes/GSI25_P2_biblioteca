@@ -1,0 +1,47 @@
+{% extends 'livros/master.html' %}
+{% block title %}Registo Sócio | Biblioteca Publica{% endblock %}
+{% block content %}
+  <section class="auth-card" aria-labelledby="subscription-title">
+    <h1 id="subscription-title">Registo Sócio</h1>
+    <p class="auth-intro">Preencha os dados para solicitar o registo como sócio da biblioteca.</p>
+
+    {% if subscription_notice %}
+      <div class="message message-success" role="status">{{ subscription_notice }}</div>
+      <dl class="subscription-summary">
+        {% for label, value in subscription_data.items %}
+          <div>
+            <dt>{{ label }}</dt>
+            <dd>{{ value }}</dd>
+          </div>
+        {% endfor %}
+      </dl>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="form-errors" role="alert">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form class="auth-form" method="post" action="{% url 'livros:registo_socio' %}">
+      {% csrf_token %}
+
+      {% for field in form %}
+        <label for="{{ field.id_for_label }}">
+          <span>{{ field.label }}</span>
+          {{ field }}
+          {% for error in field.errors %}
+            <span class="field-error">{{ error }}</span>
+          {% endfor %}
+        </label>
+      {% endfor %}
+
+      <div class="auth-actions">
+        <button class="button button-primary" type="submit">Validar registo</button>
+        <a class="button button-secondary" href="{% url 'livros:lista_livros' %}">Voltar ao catalogo</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

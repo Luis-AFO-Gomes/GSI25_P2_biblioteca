@@ -15,10 +15,10 @@
       <a href="{% url 'livros:lista_livros' %}">Catalogo</a>
       {% if request.user.is_authenticated %}
         <details class="user-menu">
-          <summary class="button button-primary">{{ request.user.get_full_name }}</summary>
+          <summary class="button button-primary">{{ request.user.get_full_name|default:request.user.username }}</summary>
           <div class="user-menu-panel">
             {% with user_group=request.user.groups.first %}
-              <span class="user-menu-item user-menu-profile">{% if user_group %}{{ user_group.name }}{% else %}member{% endif %}</span>
+              <span class="user-menu-item user-menu-profile">{% if user_group %}{{ user_group.name }}{% else %}membro{% endif %}</span>
             {% endwith %}
             <form method="post" action="{% url 'livros:logout' %}">
               {% csrf_token %}

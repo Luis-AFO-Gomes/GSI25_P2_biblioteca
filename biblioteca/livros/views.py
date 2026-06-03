@@ -4,9 +4,22 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
 
-from .forms import BibliotecaAuthenticationForm, LivroForm
+from .forms import BibliotecaAuthenticationForm, LivroForm, SubscriptionForm
 from .models import Livro
 from .services import LivroService
+
+
+MANAGER_GROUPS = {'socio', 'administrador'}
+
+
+def can_view_book_detail(user):
+    return user.is_authenticated
+
+
+def can_manage_books(user):
+    if not user.is_authenticated:
+        return False
+    return user.groups.filter(name__in=MANAGER_GROUPS).exists()
 
 
 class BibliotecaLoginView(LoginView):
@@ -24,6 +37,30 @@ class BibliotecaLogoutView(LogoutView):
     """End the current user session and return to the catalogue."""
 
     next_page = reverse_lazy('livros:lista_livros')
+
+
+class SubscriptionView(View):
+    template_name = 'livros/subscription.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': SubscriptionForm()})
+
+    def post(self, request, *args, **kwargs):
+        form = SubscriptionForm(request.POST)
+        if not form.is_valid():
+            return render(request, self.template_name, {'form': form})
+
+        subscription_data = {
+            'USERNAME': form.cleaned_data['username'],
+            'Primeiro nome': form.cleaned_data['first_name'],
+            'Apelido': form.cleaned_data['last_name'],
+            'Email': form.cleaned_data['email'],
+        }
+        return render(request, self.template_name, {
+            'form': form,
+            'subscription_data': subscription_data,
+            'subscription_notice': 'Funcionalidade não implementada, o utilizador NÃO FOI ADICIONADO',
+        })
 
 
 class LivroListMixin:
@@ -48,6 +85,12 @@ class HomeLivrosView(LivroListMixin, ListView):
 class ListaLivrosView(LivroListMixin, ListView):
     template_name = 'livros/livros.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['can_view_book_detail'] = can_view_book_detail(self.request.user)
+        context['can_manage_books'] = can_manage_books(self.request.user)
+        return context
+
 
 class LivroDetailView(DetailView):
     model = Livro
@@ -55,6 +98,11 @@ class LivroDetailView(DetailView):
     context_object_name = 'livro'
     slug_field = 'isbn'
     slug_url_kwarg = 'isbn'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not can_view_book_detail(request.user):
+            return redirect('livros:lista_livros')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         return LivroService.obter_por_isbn(self.kwargs['isbn'])
@@ -65,6 +113,7 @@ class LivroDetailView(DetailView):
             'mode': 'detail',
             'page_title': 'Detalhes do livro',
             'submit_label': None,
+            'can_manage_books': can_manage_books(self.request.user),
         })
         return context
 
@@ -73,6 +122,11 @@ class LivroCreateView(CreateView):
     model = Livro
     form_class = LivroForm
     template_name = 'livros/livro_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not can_manage_books(request.user):
+            return redirect('livros:lista_livros')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,6 +153,11 @@ class LivroUpdateView(UpdateView):
     context_object_name = 'livro'
     slug_field = 'isbn'
     slug_url_kwarg = 'isbn'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not can_manage_books(request.user):
+            return redirect('livros:detalhe_livro', isbn=kwargs['isbn'])
+        return super().dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         return LivroService.obter_por_isbn(self.kwargs['isbn'])
@@ -128,6 +187,11 @@ class LivroUpdateView(UpdateView):
 
 class LivroDeleteView(View):
     template_name = 'livros/livro_confirm_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not can_manage_books(request.user):
+            return redirect('livros:detalhe_livro', isbn=kwargs['isbn'])
+        return super().dispatch(request, *args, **kwargs)
 
     def get_livro(self):
         return LivroService.obter_por_isbn(self.kwargs['isbn'])
