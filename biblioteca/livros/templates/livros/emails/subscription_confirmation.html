@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8">
+    <title>Pedido de registo de sócio</title>
+  </head>
+  <body>
+    <p>{{ message }}</p>
+    <table border="1" cellpadding="6" cellspacing="0">
+      <tbody>
+        {% for label, value in subscription_data.items %}
+          <tr>
+            <th scope="row" align="left">{{ label }}</th>
+            <td>{{ value }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

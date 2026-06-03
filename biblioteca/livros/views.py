@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
 
 from .forms import BibliotecaAuthenticationForm, LivroForm, SubscriptionForm
+from .mail import send_subscription_confirmation_email
 from .models import Livro
 from .services import LivroService
 
@@ -56,6 +57,8 @@ class SubscriptionView(View):
             'Apelido': form.cleaned_data['last_name'],
             'Email': form.cleaned_data['email'],
         }
+        send_subscription_confirmation_email(subscription_data)
+
         return render(request, self.template_name, {
             'form': form,
             'subscription_data': subscription_data,

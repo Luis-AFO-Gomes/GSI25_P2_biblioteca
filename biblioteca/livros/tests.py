@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -304,7 +306,11 @@ class SubscriptionTests(TestCase):
         self.assertContains(response, 'auth-card')
         self.assertContains(response, 'auth-form')
 
-    def test_valid_subscription_confirms_data_without_creating_user(self):
+    @override_settings(
+        EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+        DEFAULT_FROM_EMAIL='biblioteca@gmail.com',
+    )
+    def test_valid_subscription_confirms_data_and_sends_email_without_creating_user(self):
         response = self.client.post(
             reverse('livros:registo_socio'),
             {
@@ -325,6 +331,22 @@ class SubscriptionTests(TestCase):
         self.assertContains(response, 'Socio')
         self.assertContains(response, 'novo@example.com')
         self.assertNotContains(response, 'Senha-Forte-2026')
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.from_email, settings.DEFAULT_FROM_EMAIL)
+        self.assertEqual(email.to, ['novo@example.com'])
+        self.assertEqual(email.subject, 'Pedido de registo de sócio recebido')
+        self.assertIn(
+            'O seu pedido de registo de sócio foi criado e aguarda validação por gestor da biblioteca',
+            email.body,
+        )
+        self.assertEqual(email.alternatives[0][1], 'text/html')
+        self.assertIn('<table', email.alternatives[0][0])
+        self.assertIn('novo_socio', email.alternatives[0][0])
+        self.assertIn('novo@example.com', email.alternatives[0][0])
+        self.assertNotIn('Senha-Forte-2026', email.body)
+        self.assertNotIn('Senha-Forte-2026', email.alternatives[0][0])
 
     def test_subscription_rejects_existing_username(self):
         User.objects.create_user(username='existente', password='segredo-forte')
