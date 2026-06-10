@@ -93,6 +93,10 @@ GSI25_P2_biblioteca/
                 └── subscription.html
 ```
 
+## Documentação Detalhada
+
+- [Authentication workflow](docs/authentication-workflow.md): explicação passo a passo do fluxo Python/Django de autenticação, autorização por grupos, templates envolvidos e testes relacionados.
+
 ## Ficheiros Principais
 
 - `biblioteca/manage.py`: ponto de entrada para comandos Django.
