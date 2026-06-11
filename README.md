@@ -96,6 +96,12 @@ GSI25_P2_biblioteca/
 - `biblioteca/livros/tests.py`: actualizado teste de registo para validar destinatário, remetente, HTML e ausência de palavra-passe.
 - `README.md`: substituído por documentação específica da etapa `stg10_mailSender`.
 
+## Documentação Adicional
+
+- [Fluxos CRUD Django (ORM com SQLite)](docs/crud-workflows.md): explicacao detalhada dos fluxos de listagem, detalhe, insercao, edicao e eliminacao, incluindo onde acontecem os equivalentes de `SELECT`, `INSERT`, `UPDATE` e `DELETE`.
+- [Fluxo de Autenticação com Django](docs/authentication-workflow.md): explicação passo a passo do fluxo Python/Django de autenticação, autorização por grupos, templates envolvidos e testes relacionados.
+
+
 ## Instalação
 
 Criar e activar um ambiente virtual a partir da raiz do repositório:
