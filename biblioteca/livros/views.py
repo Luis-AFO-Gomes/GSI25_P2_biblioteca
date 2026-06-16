@@ -7,6 +7,7 @@ from .forms import ArvoreForm
 from .models import Arvore
 from .services import ArvoreService
 
+
 class ArvoreListMixin:
 
     model = Arvore
@@ -14,6 +15,7 @@ class ArvoreListMixin:
 
     def get_queryset(self):
         return ArvoreService.listar()
+
 
 class HomeArvoresView(ArvoreListMixin, ListView):
 
@@ -24,9 +26,11 @@ class HomeArvoresView(ArvoreListMixin, ListView):
         context['title'] = 'Venus07'
         return context
 
+
 class ListaArvoresView(ArvoreListMixin, ListView):
 
     template_name = 'livros/arvores.html'
+
 
 class ArvoreDetailView(DetailView):
 
@@ -159,3 +163,14 @@ class ArvoreDeleteView(View):
         )
 
         return redirect('livros:lista_arvores')
+
+
+def page_not_found(request, exception):
+    message = str(exception) if exception else 'Página não encontrada.'
+
+    return render(
+        request,
+        'livros/404.html',
+        {'message': message},
+        status=404
+    )
