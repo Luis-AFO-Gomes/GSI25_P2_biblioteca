@@ -1,36 +1,46 @@
 {% extends 'livros/master.html' %}
-{% block title %}{{ title }}{% endblock %}
+
+{% block title %}
+Venus07 - Catálogo de Árvores
+{% endblock %}
+
 {% block content %}
-  <section class="page-title">
-    <p class="eyebrow">Biblioteca Publica</p>
-    <h1>{{ title }}</h1>
-  </section>
 
-  <section class="catalog-tools" aria-label="Pesquisar e filtrar livros">
+<section class="page-title">
+
+    <p class="eyebrow">Venus07</p>
+
+    <h1>Bem-vindo ao Sistema de Exportação de Árvores</h1>
+
+    <p>
+        Explore o nosso catálogo de árvores premium provenientes da Roménia.
+    </p>
+
+</section>
+
+<section class="catalog-tools">
+
     <label class="search-box">
-      <span>Pesquisar</span>
-      <input type="search" name="q" placeholder="titulo, ISBN ou editora">
+        <span>Pesquisar</span>
+        <input
+            type="search"
+            name="q"
+            placeholder="Nome da árvore ou país de origem">
     </label>
-    <label>
-      <span>Tipo</span>
-      <select name="tipo">
-        <option value="">Todos</option>
-      </select>
-    </label>
-    <label>
-      <span>Tema</span>
-      <select name="tema">
-        <option value="">Todos</option>
-      </select>
-    </label>
-    <label>
-      <span>Status</span>
-      <select name="status">
-        <option value="">Todos</option>
-      </select>
-    </label>
-    <button class="button" type="button">Filtrar</button>
-  </section>
 
-  {% include 'livros/_book_grid.html' with grid_label='Livros registados' %}
+    <label>
+        <span>Tipo</span>
+        <select name="tipo">
+            <option value="">Todos</option>
+        </select>
+    </label>
+
+    <button class="button" type="button">
+        Filtrar
+    </button>
+
+</section>
+
+{% include 'livros/_book_grid.html' with grid_label='Árvores disponíveis' %}
+
 {% endblock %}
