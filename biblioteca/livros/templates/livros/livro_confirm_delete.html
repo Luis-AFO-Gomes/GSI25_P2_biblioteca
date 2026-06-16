@@ -1,35 +1,88 @@
 {% extends 'livros/master.html' %}
-{% block title %}Apagar livro{% endblock %}
-{% block content %}
-  <section class="page-title">
-    <p class="eyebrow">Biblioteca Publica</p>
-    <h1>Apagar livro</h1>
-  </section>
 
-  <section class="record-panel">
+{% block title %}
+Apagar Árvore
+{% endblock %}
+
+{% block content %}
+
+<section class="page-title">
+
+    <p class="eyebrow">Venus07</p>
+
+    <h1>Apagar Árvore</h1>
+
+</section>
+
+<section class="record-panel">
+
     <p class="confirm-text">
-      Confirma que pretende apagar permanentemente o livro "{{ livro.titulo }}"?
+
+        Confirma que pretende apagar permanentemente a árvore
+        "{{ arvore.nome }}"?
+
     </p>
+
     <dl class="record-grid compact">
-      <div>
-        <dt>ISBN</dt>
-        <dd>{{ livro.isbn }}</dd>
-      </div>
-      <div>
-        <dt>Editora</dt>
-        <dd>{{ livro.editora }}</dd>
-      </div>
-      <div>
-        <dt>Estado</dt>
-        <dd>{{ livro.get_status_display }}</dd>
-      </div>
+
+        <div>
+            <dt>Nome</dt>
+            <dd>{{ arvore.nome }}</dd>
+        </div>
+
+        <div>
+            <dt>Tipo</dt>
+            <dd>{{ arvore.tipo }}</dd>
+        </div>
+
+        <div>
+            <dt>Altura</dt>
+            <dd>{{ arvore.altura }} m</dd>
+        </div>
+
+        <div>
+            <dt>Preço</dt>
+            <dd>€ {{ arvore.preco }}</dd>
+        </div>
+
+        <div>
+            <dt>Stock</dt>
+            <dd>{{ arvore.stock }}</dd>
+        </div>
+
+        <div>
+            <dt>País de Origem</dt>
+            <dd>{{ arvore.pais_origem }}</dd>
+        </div>
+
     </dl>
+
     <form method="post">
-      {% csrf_token %}
-      <div class="form-actions">
-        <button class="button button-danger" type="submit">Confirmar delete</button>
-        <a class="button button-secondary" href="{% url 'livros:detalhe_livro' livro.isbn %}">Cancelar</a>
-      </div>
+
+        {% csrf_token %}
+
+        <div class="form-actions">
+
+            <button
+                class="button button-danger"
+                type="submit">
+
+                Confirmar eliminação
+
+            </button>
+
+            <a
+                class="button button-secondary"
+                href="{% url 'livros:detalhe_arvore' arvore.id %}">
+
+                Cancelar
+
+            </a>
+
+        </div>
+
     </form>
-  </section>
+
+</section>
+
 {% endblock %}
