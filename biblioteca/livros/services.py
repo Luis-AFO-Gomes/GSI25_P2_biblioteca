@@ -2,31 +2,42 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.http import Http404
 
-from .models import Livro
+from .models import Arvore
 
 
-class LivroService:
-    """Business-facing access layer for Livro operations."""
+class ArvoreService:
 
     @staticmethod
     def listar():
         try:
-            return Livro.objects.select_related('editora').prefetch_related('autor').all()
+            return Arvore.objects.all()
+
         except DatabaseError as exc:
-            raise Http404('Nao foi possivel obter a lista de livros.') from exc
+            raise Http404(
+                'Não foi possível obter a lista de árvores.'
+            ) from exc
 
     @staticmethod
-    def obter_por_isbn(isbn):
+    def obter_por_id(id):
         try:
-            return Livro.objects.select_related('editora').prefetch_related('autor').get(isbn=isbn)
+            return Arvore.objects.get(id=id)
+
         except ObjectDoesNotExist as exc:
-            raise Http404('Livro nao encontrado.') from exc
+            raise Http404(
+                'Árvore não encontrada.'
+            ) from exc
+
         except DatabaseError as exc:
-            raise Http404('Nao foi possivel obter os dados do livro.') from exc
+            raise Http404(
+                'Não foi possível obter os dados da árvore.'
+            ) from exc
 
     @staticmethod
-    def apagar(livro):
+    def apagar(arvore):
         try:
-            livro.delete()
+            arvore.delete()
+
         except DatabaseError as exc:
-            raise Http404('Nao foi possivel apagar o livro.') from exc
+            raise Http404(
+                'Não foi possível apagar a árvore.'
+            ) from exc
