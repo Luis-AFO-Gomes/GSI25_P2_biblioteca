@@ -1,21 +1,49 @@
 <section class="book-grid" aria-label="{{ grid_label }}">
-  {% for livro in livros %}
-    <a class="book-card" href="{% url 'livros:detalhe_livro' livro.isbn %}" aria-label="Ver detalhes de {{ livro.titulo }}">
-      <article>
-        <div class="book-cover">
-          <span class="tag tag-left">{{ livro.tipo }}</span>
-          <span class="tag tag-right">{{ livro.tema }}</span>
-          <h2>{{ livro.titulo }}</h2>
-        </div>
-        <div class="book-details">
-          <h4>{{ livro.get_autores }}</h4>
-          <p class="book-author">{{ livro.editora }}</p>
-          <p class="book-isbn">ISBN: {{ livro.isbn }}</p>
-          <p class="status">{{ livro.get_status_display }}</p>
-        </div>
-      </article>
+
+    {% for arvore in arvores %}
+
+    <a class="book-card"
+       href="{% url 'livros:detalhe_arvore' arvore.id %}"
+       aria-label="Ver detalhes de {{ arvore.nome }}">
+
+        <article>
+
+            <div class="book-cover">
+
+                <span class="tag tag-left">
+                    {{ arvore.tipo }}
+                </span>
+
+                <span class="tag tag-right">
+                    {{ arvore.pais_origem }}
+                </span>
+
+                <h2>{{ arvore.nome }}</h2>
+
+            </div>
+
+            <div class="book-details">
+
+                <h4>Altura: {{ arvore.altura }} m</h4>
+
+                <p class="book-author">
+                    Preço: € {{ arvore.preco }}
+                </p>
+
+                <p class="book-isbn">
+                    Stock: {{ arvore.stock }}
+                </p>
+
+            </div>
+
+        </article>
+
     </a>
-  {% empty %}
-    <p>Ainda nao existem livros registados.</p>
-  {% endfor %}
+
+    {% empty %}
+
+    <p>Ainda não existem árvores registadas.</p>
+
+    {% endfor %}
+
 </section>
