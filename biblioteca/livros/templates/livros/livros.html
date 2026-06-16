@@ -1,39 +1,48 @@
 {% extends 'livros/master.html' %}
-{% block title %}Biblioteca Publica{% endblock %}
+
+{% block title %}
+Catálogo de Árvores
+{% endblock %}
+
 {% block content %}
-  <section class="page-title page-title-actions">
+
+<section class="page-title page-title-actions">
+
     <div>
-      <p class="eyebrow">Biblioteca Publica</p>
-      <h1>Catalogo</h1>
+        <p class="eyebrow">Venus07</p>
+        <h1>Catálogo de Árvores</h1>
     </div>
-    <a class="button button-primary" href="{% url 'livros:criar_livro' %}">Novo livro</a>
-  </section>
 
-  <section class="catalog-tools" aria-label="Pesquisar e filtrar livros">
+    <a class="button button-primary"
+       href="{% url 'livros:criar_arvore' %}">
+       Nova Árvore
+    </a>
+
+</section>
+
+<section class="catalog-tools">
+
     <label class="search-box">
-      <span>Pesquisar</span>
-      <input type="search" name="q" placeholder="titulo, ISBN ou editora">
+        <span>Pesquisar</span>
+        <input
+            type="search"
+            name="q"
+            placeholder="Nome da árvore ou país de origem">
     </label>
-    <label>
-      <span>Tipo</span>
-      <select name="tipo">
-        <option value="">Todos</option>
-      </select>
-    </label>
-    <label>
-      <span>Tema</span>
-      <select name="tema">
-        <option value="">Todos</option>
-      </select>
-    </label>
-    <label>
-      <span>Status</span>
-      <select name="status">
-        <option value="">Todos</option>
-      </select>
-    </label>
-    <button class="button" type="button">Filtrar</button>
-  </section>
 
-  {% include 'livros/_book_grid.html' with grid_label='Catalogo de livros' %}
+    <label>
+        <span>Tipo</span>
+        <select name="tipo">
+            <option value="">Todos</option>
+        </select>
+    </label>
+
+    <button class="button" type="button">
+        Filtrar
+    </button>
+
+</section>
+
+{% include 'livros/_book_grid.html' with grid_label='Catálogo de Árvores' %}
+
 {% endblock %}
