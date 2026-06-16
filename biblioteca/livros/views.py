@@ -159,5 +159,3 @@ class ArvoreDeleteView(View):
         )
 
         return redirect('livros:lista_arvores')
-    message = str(exception) if exception else 'Pagina nao encontrada.'
-    return render(request, 'livros/404.html', {'message': message}, status=404)
