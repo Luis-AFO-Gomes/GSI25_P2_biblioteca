@@ -2,31 +2,47 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Biblioteca Publica{% endblock %}</title>
-  <link href="{% static 'style/biblioteca.css' %}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Venus07{% endblock %}</title>
+
+    <link href="{% static 'style/biblioteca.css' %}" rel="stylesheet">
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="{% url 'livros:home_livros' %}">Biblioteca Publica</a>
+
+<header class="site-header">
+
+    <a class="brand" href="{% url 'livros:home_arvores' %}">
+        Venus07
+    </a>
+
     <nav class="site-nav" aria-label="Navegacao principal">
-      <a href="{% url 'livros:home_livros' %}">Inicio</a>
-      <a href="{% url 'livros:lista_livros' %}">Catalogo</a>
+        <a href="{% url 'livros:home_arvores' %}">Inicio</a>
+        <a href="{% url 'livros:lista_arvores' %}">Catalogo</a>
     </nav>
-  </header>
-  <main id="content">
+
+</header>
+
+<main id="content">
+
     {% if messages %}
-      <section class="messages" aria-label="Mensagens">
-        {% for message in messages %}
-          <p class="message message-{{ message.tags }}">{{ message }}</p>
-        {% endfor %}
-      </section>
+        <section class="messages" aria-label="Mensagens">
+            {% for message in messages %}
+                <p class="message message-{{ message.tags }}">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        </section>
     {% endif %}
-    {% block content %}{% endblock %}
-  </main>
-  <footer class="site-footer">
-    <span>Biblioteca Publica</span>
-  </footer>
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+<footer class="site-footer">
+    <span>Venus07</span>
+</footer>
+
 </body>
 </html>
