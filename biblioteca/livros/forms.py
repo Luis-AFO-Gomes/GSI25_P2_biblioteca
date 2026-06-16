@@ -1,44 +1,28 @@
 from django import forms
 
-from .models import Livro
+from .models import Arvore
 
 
-class LivroForm(forms.ModelForm):
-    """Form used by the create and update screens for Livro records."""
+class ArvoreForm(forms.ModelForm):
 
     class Meta:
-        model = Livro
+
+        model = Arvore
+
         fields = [
-            'isbn',
-            'titulo',
-            'autor',
-            'idioma',
+            'nome',
             'tipo',
-            'tema',
-            'editora',
-            'data_pub',
-            'original',
-            'status',
+            'altura',
+            'preco',
+            'stock',
+            'pais_origem'
         ]
+
         labels = {
-            'isbn': 'ISBN',
-            'titulo': 'Titulo',
-            'autor': 'Autores',
-            'idioma': 'Idioma',
+            'nome': 'Nome',
             'tipo': 'Tipo',
-            'tema': 'Tema',
-            'editora': 'Editora',
-            'data_pub': 'Data de publicacao',
-            'original': 'Original',
-            'status': 'Estado',
+            'altura': 'Altura',
+            'preco': 'Preço (€)',
+            'stock': 'Stock',
+            'pais_origem': 'País de Origem',
         }
-        widgets = {
-            'data_pub': forms.DateInput(attrs={'type': 'date'}),
-        }
-
-    def __init__(self, *args, readonly_isbn=False, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if readonly_isbn:
-            self.fields['isbn'].disabled = True
-            self.fields['isbn'].help_text = 'O ISBN nao pode ser alterado depois de criado.'
